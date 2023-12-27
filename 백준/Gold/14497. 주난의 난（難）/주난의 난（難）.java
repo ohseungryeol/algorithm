@@ -39,7 +39,7 @@ public class Main {
             }
         }
         BFS();
-        System.out.println(answer);
+        System.out.println(dist[x2][y2]+1);
     }
 
     public static void BFS(){
@@ -51,11 +51,7 @@ public class Main {
             int x = tmp[0];
             int y = tmp[1];
             int cnt = tmp[2];
-           // System.out.printf("(%d,%d,%d)\n",x,y,cnt);
-            if (map[x][y]=='#'){
-                answer = cnt+1;
-                //return;
-            }
+
             for (int i=0; i<4; i++){
                 int nx = x+dx[i];
                 int ny = y+dy[i];
