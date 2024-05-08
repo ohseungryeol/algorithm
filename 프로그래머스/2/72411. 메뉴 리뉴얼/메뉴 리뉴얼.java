@@ -79,7 +79,7 @@ class Solution {
             if(!check[i]){
                 check[i]=true;
                 arr[L]=order.charAt(i);
-                Combi(L+1,i+1,len,order,arr,check);
+                Combi(L+1,i,len,order,arr,check);
                 check[i]=false;
             }
         }
