@@ -3,80 +3,67 @@ import java.util.Collections;
 import java.util.List;
 
 public class Solution {
-    static class Time implements Comparable<Time>{
+
+    static class Info implements Comparable<Info>{
         int start;
         int end;
 
-        public Time(int start, int end) {
+        public Info(int start, int end) {
             this.start = start;
             this.end = end;
         }
 
         @Override
-        public int compareTo(Time o) {
-            // 시간별로 오름차순 정렬
+        public int compareTo(Info o) {
             if(this.start==o.start) return this.end-o.end;
             return this.start-o.start;
         }
     }
     public int solution(String[][] book_time) {
         int answer = 0;
-        List<Time> timeList = new ArrayList<>();
-        for (String[] times:book_time){
-            int startTime = toMinutes(times[0]);
-            int endTime = toMinutes(times[1]);
-            timeList.add(new Time(startTime, endTime));
+        List<Info> infoList = new ArrayList<>();
+        for(String[] book: book_time){
+            String h = book[0];
+            String m = book[1];
+            infoList.add(new Info(toMinutes(h), toMinutes(m)));
         }
 
-
-        answer =1;
-        List<Integer> rooms = new ArrayList<>();
-        for (int i=0; i<timeList.size(); i++){
-            // 해당시간
-            Collections.sort(timeList);
-            int startTime = timeList.get(i).start;
-            boolean reserve = false;
-
-            for (int j=0; j<rooms.size(); j++){
-                if(startTime>=rooms.get(j)+10){
-                    rooms.set(j,timeList.get(i).end);
-                    reserve=true;
+        Collections.sort(infoList);
+        //int prevEndTime = infoList.get(0).end;
+        int room =1;
+        boolean[] roomReserved = new boolean[infoList.size()];
+        for (int i=1; i<infoList.size(); i++){
+            int curStartTime = infoList.get(i).start;
+            int curEndTime = infoList.get(i).end;
+            boolean isRoom = false;
+            // 전 예약 리스트들
+            for (int j=0; j<i; j++){
+                int prevEndTime = infoList.get(j).end;
+                //전에 있던 방에 입실 가능한지
+                if(!roomReserved[j] && curStartTime>= prevEndTime+10){
+                    //가능하면 해당 방에 입실하고 퇴실시간을 늘린다.
+                    infoList.get(j).end = curEndTime;
+                    // 그리고 현재 예약은 지운다.
+                    roomReserved[i]=true;
+                    //infoList.remove(infoList.get(i));
+                    isRoom = true;
                     break;
                 }
             }
-            /*for (int j=0; j<timeList.size(); j++){
-                Time Roomtime = timeList.get(j);
-                //비어있는 룸이 있는가. 해당 시작시간 <= 룸의 퇴실+10분시간
-                if(startTime>=Roomtime.end+10){
-                    // 해당 룸의 종료시간을 늘린다.
-                    Roomtime.end=timeList.get(i).end;
-                    reserve = true;
-                    break;
-                }
-            }*/
-            if(!reserve){
-                rooms.add(timeList.get(i).end);
-            }
 
+            if(!isRoom) room++;
         }
-        System.out.println(rooms.size());
-        return rooms.size();
 
+        
+        return room;
     }
 
-    public int toMinutes(String time){
-        String regex = ":";
-        String[] split = time.split(regex);
+    
+    public static int toMinutes(String time){
+        String[] times = time.split(":");
+        int hour = Integer.parseInt(times[0]);
+        int minute = Integer.parseInt(times[1]);
 
-        int hourToMinutes = Integer.parseInt(split[0]) * 60;
-        int Minutes = Integer.parseInt(split[1]);
-
-        return hourToMinutes + Minutes;
+        return hour*60+minute;
     }
-
-    public int EmptyRoomTime(int time){
-        return time+10;
-    }
-
-  
 }
