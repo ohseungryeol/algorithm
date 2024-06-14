@@ -1,45 +1,40 @@
+import java.util.*;
 class Solution {
     static int answer = Integer.MAX_VALUE;
-    public int solution(String begin, String target, String[] words) {
-        boolean[] check = new boolean[words.length];
-        boolean isContain = false;
     
-        for (int i=0; i<words.length; i++){
-            if(target.equals(words[i])) isContain = true;
-        }
-        // words 안에 target이 없으면 
-        if(!isContain) return 0;
-        else{
-            DFS(begin,target,words,0, check);
-            return answer;
+    public int solution(String begin, String target, String[] words) {
+        
+        boolean[] visited = new boolean[words.length];
+        DFS(begin,target,0,words,visited);
+        if(answer==Integer.MAX_VALUE){
+            return 0;
         }
         
-        //hit - hot - lot - log -cog
-        //hit - hot - dot - dog -cog
+        return answer;
     }
     
-    public static void DFS(String begin, String target, String[] words, int count,boolean[] check){
-        System.out.print(begin+" - ");
-        if(begin.equals(target)){
+    public static void DFS(String word,String target, int count,String[] words,boolean[] visited){
+        if(word.equals(target)){
             answer = Math.min(answer,count);
+            return;
         }
+        
         for (int i=0; i<words.length; i++){
-            if(!check[i] && isChange(begin,words[i])){
-                check[i]=true;
-                DFS(words[i],target,words,count+1,check);
-                check[i]=false;
+            if(!visited[i] && isOneDiff(word,words[i])){
+                visited[i]=true;
+                DFS(words[i],target,count+1,words,visited);
+                visited[i]=false;
             }
         }
+        
     }
     
-    // 한개의 알파벳만 바꿔서 만들 수 있는지 여부 return
-    public static boolean isChange(String word, String changeWord){
-        int num= changeWord.length();
-        int cnt =0;
-        for (int i=0; i<word.length(); i++){
-            if(word.charAt(i)==changeWord.charAt(i)) cnt++;
+    public static boolean isOneDiff(String str1, String str2){
+        int len = str1.length();
+        for (int i=0; i<str1.length(); i++){
+            if(str1.charAt(i)==str2.charAt(i)) len--;
         }
-        if(cnt==num-1) return true;
-        return false;
+        
+        return (len==1);
     }
 }
