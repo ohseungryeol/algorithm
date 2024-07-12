@@ -28,22 +28,16 @@ class Solution {
             i++;
         }
         
-        answer = BFS();
-        if(answer==Integer.MAX_VALUE) return -1;
-        else return answer;
+        return BFS();
     }
     
     public static int BFS(){
-        int answer = Integer.MAX_VALUE;
+    
         while(!queue.isEmpty()){
             int[] tmp = queue.poll();
             int x = tmp[0];
             int y = tmp[1];
             int cnt = tmp[2];
-            
-            if(map[x][y]=='G'){
-                answer = Math.min(answer,cnt);
-            } 
             
             for (int i=0; i<4; i++){
                 int nx =x+dx[i];
@@ -54,7 +48,7 @@ class Solution {
                     int[] points = slideMove(nx,ny,i);
                     int px=points[0];
                     int py=points[1];
-                    
+                    if(map[px][py]=='G') return cnt+1;
                     if(!visited[px][py]){
                         visited[px][py]=true;
                         queue.offer(new int[]{px,py,cnt+1});    
@@ -64,7 +58,7 @@ class Solution {
             }
         }
         
-        return answer;
+        return -1;
     }
     
     public static int[] slideMove(int x, int y, int dir){
