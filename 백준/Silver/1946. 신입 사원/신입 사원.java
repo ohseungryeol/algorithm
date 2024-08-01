@@ -43,7 +43,7 @@ public class Main {
                 int first = arr.get(i).first;
                 int second = arr.get(i).second;
 
-                if(first<firstMin || second<secondMin){
+                if(first<=firstMin || second<=secondMin){
                     answer++;
                     //System.out.println("test="+t+" first ="+first+", second="+second+", firstMax="+firstMax+", secondMax ="+secondMax);
                 }
