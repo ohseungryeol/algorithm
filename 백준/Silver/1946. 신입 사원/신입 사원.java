@@ -42,12 +42,10 @@ public class Main {
             for (int i=1; i<arr.size(); i++){
                 int first = arr.get(i).first;
                 int second = arr.get(i).second;
-
-                if(first<=firstMin || second<=secondMin){
+                // 서류나 면접 중 하나라도 순위가 같거나 높으면 선발, 이미 서류는 정렬
+                if(second<=secondMin){
                     answer++;
-                    //System.out.println("test="+t+" first ="+first+", second="+second+", firstMax="+firstMax+", secondMax ="+secondMax);
                 }
-                if(first<firstMin) firstMin=first;
                 if(second<secondMin) secondMin=second;
             }
             System.out.println(answer);
