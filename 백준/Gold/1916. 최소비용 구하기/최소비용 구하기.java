@@ -1,89 +1,83 @@
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
 
 public class Main {
-	private static final int INF = Integer.MAX_VALUE / 16;
-	static List<ArrayList<Node>> list;
-	static int dist[];
+    static ArrayList<ArrayList<Edge>> graph = new ArrayList<>();
+    static boolean[] visited;
+    // 각 정점으로 가는 최소 비용을 저장한 배열
+    static int[] dist;
+    static class Edge implements Comparable<Edge>{
+        int v;
+        int cost;
 
-	static int N;
+        public Edge(int v, int cost) {
+            this.v = v;
+            this.cost = cost;
+        }
 
-	static class Node implements Comparable<Node> {
-		int nodeNum;
-		int weight;
+        @Override
+        public int compareTo(Edge o) {
+            return this.cost - o.cost;
+        }
+    }
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int N = Integer.parseInt(br.readLine());
+        int M = Integer.parseInt(br.readLine());
+        dist = new int[N + 1];
+        visited = new boolean[N + 1];
 
-		public Node(int nodeNum, int weight) {
-			this.nodeNum = nodeNum;
-			this.weight = weight;
-		}
+        Arrays.fill(dist,Integer.MAX_VALUE);
+        for (int i=0; i<=N; i++){
+            graph.add(new ArrayList<Edge>());
+        }
 
-		@Override
-		public int compareTo(Node o) {
-			return weight - o.weight;
-		}
-	} // End of Node
+        StringTokenizer st;
+        for (int i=0; i<M; i++){
+            st = new StringTokenizer(br.readLine());
+            int s = Integer.parseInt(st.nextToken());
+            int e = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
 
-	public static void main(String[] args) throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st;
+            graph.get(s).add(new Edge(e, c));
+        }
 
-		N = Integer.parseInt(br.readLine()); // 도시의 개수
-		int M = Integer.parseInt(br.readLine()); // 버스의 개수
-		
+        st = new StringTokenizer(br.readLine());
+        int start = Integer.parseInt(st.nextToken());
+        int end = Integer.parseInt(st.nextToken());
 
-		list = new ArrayList<>();
-		dist = new int[N + 1];
-		Arrays.fill(dist, INF);
+        Dijkstra(start);
+        System.out.println(dist[end]);
 
-		for(int i=0; i<=N; i++) {
-			list.add(new ArrayList<>());
-		}
-		
-		for(int i=0; i<M; i++) {
-			st = new StringTokenizer(br.readLine());
+    }
 
-			int s = Integer.parseInt(st.nextToken());
-			int d = Integer.parseInt(st.nextToken());
-			int w = Integer.parseInt(st.nextToken());
+    public static void Dijkstra(int start){
+        dist[start]=0;
+        PriorityQueue<Edge> pq = new PriorityQueue<>();
+        pq.offer(new Edge(start, 0));
 
-			
-			list.get(s).add(new Node(d, w));
-		}
-		
-		st = new StringTokenizer(br.readLine());
-		
-		int start = Integer.parseInt(st.nextToken());
-		int destination = Integer.parseInt(st.nextToken());
-			
-		System.out.println(dijkstra(start, destination));
+        while(!pq.isEmpty()){
+            Edge cur = pq.poll();
+            int cv = cur.v;
 
-	} // End of main
+            if(dist[cv]<cur.cost) continue;
+            for (Edge next:graph.get(cv)){
+                int nv = next.v;
+                int cost =next.cost;
 
-	static int dijkstra(int start, int destination) {
-		PriorityQueue<Node> que = new PriorityQueue<Node>();
-		boolean visit[] = new boolean[N + 1];
+                if(dist[cv]+cost<dist[nv]){
+                    dist[nv]=dist[cv]+cost;
+                    pq.offer(next);
+                }
 
-		dist[start] = 0;
-		que.offer(new Node(start, 0));
-		
-		while( !que.isEmpty() ) {
-			Node queNode = que.poll();
-			int start_nodeNum = queNode.nodeNum;
-			
-			if( !visit[start_nodeNum] ) {
-				visit[start_nodeNum] = true;
-				
-				for(Node node : list.get(start_nodeNum)) {
-					
-					if( !visit[node.nodeNum] && dist[node.nodeNum] > (dist[start_nodeNum] + node.weight) ) {
-						dist[node.nodeNum] = dist[start_nodeNum] + node.weight;
-						que.offer(new Node(node.nodeNum, dist[node.nodeNum]));
-					}
-				}
-			}
-		}
-		
-		return dist[destination];
-	} // End of dijkstra
+               
+            }
+        }
 
-} // End of Main class
+    }
+}
